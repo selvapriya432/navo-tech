@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>NovaTech | Executive Intelligence Portal</title>
+  <!-- Google Fonts + Font Awesome + Chart.js CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #e0e8f0 0%, #cdd9e6 100%);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* LOGIN CONTAINER */
+    .login-container {
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 480px;
+      padding: 2.2rem 2rem 2.5rem;
+      transition: 0.25s;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #0F2C3D, #1B6B7E);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .login-header p {
+      color: #5e7c97;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+    .input-group {
+      margin-bottom: 1.3rem;
+    }
+    .input-group label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: #1f3b4a;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: 1.2rem;
+      border: 1.5px solid #e2eaf0;
+      background: #fefefe;
+      font-size: 1rem;
+      transition: 0.2s;
+      outline: none;
+    }
+    .input-group input:focus {
+      border-color: #1b6b7e;
+      box-shadow: 0 0 0 3px rgba(27,107,126,0.2);
+    }
+    .login-btn {
+      width: 100%;
+      background: #1b6b7e;
+      color: white;
+      border: none;
+      padding: 0.9rem;
+      font-weight: 700;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.2s;
+      margin-top: 0.5rem;
+      box-shadow: 0 8px 18px rgba(27,107,126,0.3);
+    }
+    .login-btn:hover {
+      background: #0f4f60;
+      transform: translateY(-2px);
+    }
+    .demo-note {
+      font-size: 0.7rem;
+      text-align: center;
+      margin-top: 1.2rem;
+      color: #6b89a0;
+    }
+
+    /* MAIN DASHBOARD (hidden initially) */
+    .dashboard-wrapper {
+      display: none;
+      width: 100%;
+      max-width: 1600px;
+      background: #f4f9fe;
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.2);
+      overflow: hidden;
+      animation: fadeSlideUp 0.4s ease;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header with NovaTech branding + logout */
+    .dash-header {
+      background: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #e2edf2;
+    }
+    .logo-area h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0f4c5f;
+    }
+    .logo-area span {
+      font-size: 0.75rem;
+      color: #5f8b9f;
+    }
+    .header-actions {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    .cognos-link {
+      background: #1e4663;
+      color: white;
+      padding: 0.5rem 1.3rem;
+      border-radius: 2rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    .cognos-link:hover {
+      background: #0f3550;
+      transform: scale(0.97);
+    }
+    .logout-btn {
+      background: none;
+      border: 1px solid #cbdde6;
+      padding: 0.5rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      color: #1e2f41;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .logout-btn:hover {
+      background: #f0f4f9;
+      border-color: #b9d0dd;
+    }
+
+    /* KPI grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.3rem;
+      padding: 1.8rem 2rem 0.8rem 2rem;
+    }
+    .kpi-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid #eef3f8;
+    }
+    .kpi-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #5b7f98;
+      letter-spacing: 0.5px;
+    }
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1a2c3e;
+      margin-top: 6px;
+    }
+
+    /* Charts row */
+    .charts-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding: 1rem 2rem;
+    }
+    .chart-card {
+      flex: 1;
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      border: 1px solid #eef2f6;
+    }
+    .chart-card h3 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #1b6b7e;
+      padding-left: 12px;
+    }
+    canvas { max-height: 260px; width: 100%; }
+
+    /* Table + extra */
+    .insight-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding: 0.5rem 2rem 2rem 2rem;
+    }
+    .table-card {
+      flex: 1.5;
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+    }
+    .cognos-card {
+      flex: 1;
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .city-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .city-table th, .city-table td {
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 1px solid #ecf3f8;
+    }
+    .cognos-card h3 i {
+      margin-right: 8px;
+    }
+    .open-ibm-btn {
+      background: #0f4c5f;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 40px;
+      border: none;
+      font-weight: 700;
+      margin-top: 18px;
+      cursor: pointer;
+      width: 80%;
+      font-size: 1rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.7rem;
+      background: #ffffffb3;
+      border-top: 1px solid #e2edf2;
+    }
+    @media (max-width: 780px) {
+      .kpi-value { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN PANEL -->
+<div id="loginPanel" class="login-container">
+  <div class="login-header">
+    <h1><i class="fas fa-chart-line"></i>  NovaTech</h1>
+    <p>Operations Dashboard Web Portal</p>
+  </div>
+  <div class="input-group">
+    <label><i class="fas fa-user"></i> Username</label>
+    <input type="text" id="loginUsername" placeholder="Enter username" value="Selvapriya">
+  </div>
+  <div class="input-group">
+    <label><i class="fas fa-lock"></i> Password</label>
+    <input type="password" id="loginPassword" placeholder="••••••" value="priya">
+  </div>
+  <button class="login-btn" id="doLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+  <div class="demo-note">
+    <i class="fas fa-info-circle"></i> Demo: Selvapriya / priya
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD : NovaTech Analytics + IBM Cognos Integration -->
+<div id="dashboardMain" class="dashboard-wrapper">
+  <div class="dash-header">
+    <div class="logo-area">
+      <h2><i class="fas fa-microchip"></i> NovaTech · Executive Edge</h2>
+      <span>Intelligent Operations | Real-time KPIs</span>
+    </div>
+    <div class="header-actions">
+      <a href="#" id="cognosHeaderBtn" class="cognos-link" target="_blank"><i class="fab fa-ibm"></i> IBM Cognos Dashboard</a>
+      <button id="logoutDashboardBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+
+  <!-- KPI TILES (Units, Revenue, Return Rate, Satisfaction) -->
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- Bar + Line charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3><i class="fas fa-chart-bar"></i> Sales by Model (Units Sold)</h3>
+      <canvas id="barModelChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3><i class="fas fa-chart-line"></i> Monthly Sales Trend (Units)</h3>
+      <canvas id="lineTrendChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Top Cities Table + Cognos Card -->
+  <div class="insight-row">
+    <div class="table-card">
+      <h3><i class="fas fa-city"></i> Top 5 Cities by Revenue (₹)</h3>
+      <table class="city-table" id="cityRevenueTable">
+        <thead><tr><th>Rank</th><th>City</th><th>Revenue (INR)</th><th>Share</th></tr></thead>
+        <tbody id="cityTableBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="cognos-card">
+      <h3><i class="fab fa-ibm"></i> IBM Cognos Dashboard</h3>
+      <p style="font-size:0.8rem; margin-top:8px;">Embedded analytics • Advanced forecasting & supply chain view</p>
+      <button id="openCognosMainBtn" class="open-ibm-btn"><i class="fas fa-chart-pie"></i> Open Cognos Dashboard</button>
+      <div style="margin-top: 16px; font-size:0.7rem; color:#5982a0;">
+        <i class="fas fa-external-link-alt"></i> Launch IBM Cognos Analytics
+      </div>
+    </div>
+  </div>
+  <footer>NovaTech Intelligence Platform | Data driven by Nova mobile series | Filters available via region & model (dynamic)</footer>
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  //  FULL NOVATECH DATASET (based on provided Excel & screenshots)
+  //  Contains: Model, Region, Channel, UnitsSold, Revenue, City, SaleDate, ReturnFlag, CSAT
+  // ---------------------------------------------------------------
+  const novaSalesData = [
+    ["Nova Ultra","West","Retail",11,163957.75,"Delhi","2024-01-31",false,2.7],["Nova 5G","East","Online",9,78168.24,"Hyderabad","2024-11-28",false,4.3],["Nova X1","West","Online",19,368168.13,"Hyderabad","2024-01-09",true,2.5],["Nova Lite","West","Retail",29,1397465.34,"Bengaluru","2024-03-29",false,4.3],["Nova Lite","South","Retail",8,279500.96,"Delhi","2024-09-20",true,1.9],["Nova Ultra","Central","Retail",6,193440.84,"Delhi","2024-01-22",false,2.8],["Nova X2 Pro","West","Online",47,2188339.27,"Delhi","2024-02-13",true,1.2],["Nova X2 Pro","South","Retail",4,117169.88,"Pune","2024-06-02",false,1.1],["Nova 5G","North","Retail",35,1231541.15,"Jaipur","2024-11-01",false,3.2],["Nova Lite","West","Online",50,841611,"Pune","2024-08-13",false,1.3],["Nova 5G","West","Retail",9,98271.36,"Pune","2024-05-16",false,4.9],["Nova 5G","North","Online",8,65432.64,"Delhi","2024-03-04",true,3.2],["Nova 5G","East","Retail",37,385114.87,"Mumbai","2024-05-07",false,2.0],["Nova 5G","Northeast","Retail",38,1541967.42,"Jaipur","2024-11-06",false,1.8],["Nova 5G","South","Retail",27,856770.21,"Mumbai","2024-07-29",false,2.1],["Nova X1","Northeast","Online",18,647413.2,"Kolkata","2024-08-11",false,3.3],["Nova X1","North","Retail",1,43728.68,"Chennai","2024-08-08",true,3.1],["Nova 5G","North","Retail",27,508525.56,"Bengaluru","2024-11-18",true,3.7],["Nova 5G","Northeast","Retail",33,1346186.16,"Bengaluru","2024-08-15",false,4.9],["Nova Ultra","Central","Online",9,211661.46,"Kolkata","2024-07-01",false,2.5],["Nova X1","Northeast","Retail",2,83668.92,"Jaipur","2024-08-30",false,4.4],["Nova Ultra","South","Online",39,1722206.46,"Bengaluru","2024-09-18",false,4.6],["Nova X2 Pro","South","Retail",26,852635.68,"Hyderabad","2024-01-23",false,4.6],["Nova X1","South","Online",8,422678,"Kolkata","2024-10-09",false,3.7],["Nova 5G","South","Online",47,2001382.67,"Pune","2024-10-24",false,4.5],["Nova Ultra","East","Online",40,1883878.8,"Delhi","2024-11-09",false,2.2],["Nova X1","Northeast","Online",36,1332281.88,"Kolkata","2024-03-22",false,3.2],["Nova X2 Pro","Central","Retail",37,266982.38,"Kolkata","2024-12-22",false,1.5],["Nova Lite","North","Online",49,1501748.57,"Mumbai","2024-01-12",false,1.9],["Nova X1","South","Online",47,1791363.17,"Kolkata","2024-07-27",false,4.6],["Nova Lite","South","Online",3,48775.23,"Delhi","2024-06-19",false,4.0],["Nova Ultra","East","Retail",40,662498.4,"Bengaluru","2024-04-08",true,2.6],["Nova X1","Central","Retail",31,1021136.9,"Delhi","2024-10-31",true,4.3],["Nova X2 Pro","West","Online",29,393553.2,"Chennai","2024-06-16",false,3.2],["Nova 5G","Northeast","Retail",16,734714.24,"Bengaluru","2024-09-16",false,2.4],["Nova Lite","Northeast","Online",4,95842.88,"Delhi","2024-12-13",true,3.8],["Nova Ultra","South","Online",8,424445.52,"Delhi","2024-12-15",true,2.3],["Nova Ultra","North","Retail",7,332013.57,"Jaipur","2024-01-29",false,3.4],["Nova 5G","Northeast","Online",20,465172.2,"Bengaluru","2024-07-11",false,3.0],["Nova X1","West","Online",17,421228.72,"Jaipur","2024-08-04",false,4.6],["Nova 5G","South","Retail",20,633145.4,"Pune","2024-11-07",false,2.0],["Nova Ultra","North","Online",41,1140560.55,"Delhi","2024-12-24",false,3.4],["Nova Lite","South","Online",1,18744.19,"Bengaluru","2024-03-30",false,4.9],["Nova Ultra","North","Retail",20,929096,"Delhi","2024-02-04",false,2.1],["Nova X1","North","Online",33,429046.2,"Delhi","2024-01-04",false,3.1],["Nova Ultra","West","Retail",36,1220881.68,"Hyderabad","2024-10-22",false,2.8],["Nova Ultra","Central","Online",11,624632.14,"Kolkata","2024-03-25",false,3.9],["Nova Ultra","East","Online",23,667824.78,"Chennai","2024-10-10",false,1.7],["Nova X2 Pro","North","Retail",45,626656.95,"Bengaluru","2024-07-04",false,2.0],["Nova Lite","South","Online",22,510606.58,"Kolkata","2024-02-27",false,4.1],["Nova 5G","Northeast","Retail",32,1586903.04,"Bengaluru","2024-04-15",true,1.1],["Nova 5G","North","Online",11,440320.98,"Delhi","2024-12-01",true,2.0],["Nova X2 Pro","South","Online",15,140823.6,"Hyderabad","2024-11-15",false,1.1],["Nova X1","South","Online",26,1070006.08,"Hyderabad","2024-02-04",false,2.0],["Nova Lite","West","Retail",4,95319.44,"Kolkata","2024-08-31",false,3.6],["Nova Lite","Central","Online",8,165813.12,"Bengaluru","2024-09-19",false,3.3],["Nova Ultra","West","Retail",50,2076268,"Chennai","2024-06-10",false,4.4],["Nova X2 Pro","South","Retail",3,68326.56,"Chennai","2024-03-30",true,1.7],["Nova X2 Pro","South","Retail",7,146525.89,"Kolkata","2024-07-19",false,3.2],["Nova X2 Pro","North","Online",3,55324.38,"Delhi","2024-03-30",true,2.5],["Nova X1","East","Retail",41,366619.13,"Mumbai","2024-01-06",false,2.5],["Nova X1","Central","Retail",47,1249809.43,"Mumbai","2024-11-28",false,2.1],["Nova 5G","Northeast","Retail",21,1021824.51,"Kolkata","2024-01-18",false,4.3],["Nova Ultra","Northeast","Retail",18,358884,"Delhi","2024-02-08",false,2.7],["Nova Ultra","Northeast","Retail",5,168723.85,"Mumbai","2024-06-02",true,4.2],["Nova 5G","East","Retail",40,1145643.2,"Delhi","2024-09-24",false,2.7],["Nova X2 Pro","Central","Online",25,606439.75,"Kolkata","2024-08-23",false,3.2],["Nova 5G","South","Online",44,627634.04,"Pune","2024-01-16",false,4.4],["Nova 5G","West","Retail",2,62014.24,"Hyderabad","2024-03-08",false,1.1],["Nova X1","North","Online",49,1797980.52,"Hyderabad","2024-07-03",false,2.8],["Nova X1","East","Retail",32,1414319.36,"Chennai","2024-02-19",false,3.9],["Nova Ultra","West","Retail",12,186528.48,"Mumbai","2024-09-19",false,3.9],["Nova Lite","West","Retail",7,145549.81,"Hyderabad","2024-09-05",false,4.4],["Nova X2 Pro","North","Online",24,324702.48,"Delhi","2024-01-10",false,4.7],["Nova Lite","Central","Retail",4,131805.56,"Chennai","2024-05-22",false,3.4],["Nova Lite","West","Retail",32,263477.76,"Chennai","2024-05-03",false,4.8],["Nova 5G","North","Retail",31,1681632.51,"Delhi","2024-11-24",true,4.9],["Nova 5G","Northeast","Online",7,114423.26,"Delhi","2024-02-11",true,1.2],["Nova 5G","North","Online",3,48742.2,"Delhi","2024-06-09",false,4.6],["Nova X1","West","Retail",20,726589.4,"Jaipur","2024-11-26",false,2.4],["Nova 5G","South","Online",31,727301.54,"Jaipur","2024-09-20",true,1.9],["Nova X1","West","Online",3,29383.5,"Mumbai","2024-12-16",false,4.9],["Nova Lite","East","Online",49,1705935.98,"Pune","2024-09-28",false,4.0],["Nova Ultra","South","Online",15,273940.95,"Hyderabad","2024-06-04",false,2.6]
+  ];
+
+  const fullDataset = novaSalesData.map(rec => ({
+    model: rec[0], region: rec[1], channel: rec[2], unitsSold: rec[3], revenue: rec[4],
+    city: rec[5], saleDate: rec[6], isReturn: rec[7], csat: rec[8]
+  }));
+
+  // dynamic filters (region & model) but as per original we keep full dataset for demo simplicity, but we include interactive concept
+  let currentRegion = "ALL";
+  let currentModel = "ALL";
+
+  function getFilteredData() {
+    return fullDataset.filter(item => {
+      if (currentRegion !== "ALL" && item.region !== currentRegion) return false;
+      if (currentModel !== "ALL" && item.model !== currentModel) return false;
+      return true;
+    });
+  }
+
+  function computeKPIs(data) {
+    let totalUnits = 0, totalRevenue = 0, totalReturns = 0, sumCSAT = 0, csatCount = 0;
+    data.forEach(d => {
+      totalUnits += d.unitsSold;
+      totalRevenue += d.revenue;
+      if (d.isReturn) totalReturns += d.unitsSold;
+      if (d.csat) { sumCSAT += d.csat; csatCount++; }
+    });
+    const returnRate = totalUnits ? (totalReturns / totalUnits) * 100 : 0;
+    const avgCSAT = csatCount ? sumCSAT / csatCount : 0;
+    return { totalUnits, totalRevenue, returnRate, avgCSAT };
+  }
+
+  function getModelSales(data) {
+    const map = new Map();
+    data.forEach(d => map.set(d.model, (map.get(d.model) || 0) + d.unitsSold));
+    return { labels: Array.from(map.keys()), values: Array.from(map.values()) };
+  }
+
+  function getMonthlyTrend(data) {
+    const monthMap = new Map();
+    data.forEach(d => {
+      const ym = d.saleDate.substring(0,7);
+      monthMap.set(ym, (monthMap.get(ym) || 0) + d.unitsSold);
+    });
+    const sorted = Array.from(monthMap.entries()).sort((a,b)=>a[0].localeCompare(b[0]));
+    return { months: sorted.map(m=>m[0]), values: sorted.map(m=>m[1]) };
+  }
+
+  function getTopCities(data) {
+    const cityRev = new Map();
+    data.forEach(d => cityRev.set(d.city, (cityRev.get(d.city) || 0) + d.revenue));
+    const sorted = Array.from(cityRev.entries()).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const total = sorted.reduce((acc, [,rev]) => acc+rev,0);
+    return sorted.map(([city, rev], idx) => ({ rank: idx+1, city, revenue: rev, share: total ? (rev/total)*100 : 0 }));
+  }
+
+  let barChart, lineChart;
+
+  function renderDashboard() {
+    const data = getFilteredData();
+    const kpis = computeKPIs(data);
+    document.getElementById("kpiGrid").innerHTML = `
+      <div class="kpi-card"><div class="kpi-title"><i class="fas fa-mobile-alt"></i> Total Units Sold</div><div class="kpi-value">${kpis.totalUnits.toLocaleString()}</div></div>
+      <div class="kpi-card"><div class="kpi-title"><i class="fas fa-rupee-sign"></i> Total Revenue</div><div class="kpi-value">₹${(kpis.totalRevenue/1e7).toFixed(2)}Cr</div></div>
+      <div class="kpi-card"><div class="kpi-title"><i class="fas fa-percent"></i> Return Rate %</div><div class="kpi-value">${kpis.returnRate.toFixed(2)}%</div></div>
+      <div class="kpi-card"><div class="kpi-title"><i class="fas fa-star"></i> Avg Satisfaction Score</div><div class="kpi-value">${kpis.avgCSAT.toFixed(2)}/5</div></div>
+    `;
+    const modelData = getModelSales(data);
+    if (barChart) barChart.destroy();
+    barChart = new Chart(document.getElementById("barModelChart"), {
+      type: 'bar', data: { labels: modelData.labels, datasets: [{ label: 'Units Sold', data: modelData.values, backgroundColor: '#1B6B7E', borderRadius: 8 }] },
+      options: { responsive: true }
+    });
+    const monthly = getMonthlyTrend(data);
+    if (lineChart) lineChart.destroy();
+    lineChart = new Chart(document.getElementById("lineTrendChart"), {
+      type: 'line', data: { labels: monthly.months.slice(-12), datasets: [{ label: 'Monthly Units', data: monthly.values.slice(-12), borderColor: '#E68A2E', tension: 0.3, fill: false }] },
+      options: { responsive: true }
+    });
+    const topCities = getTopCities(data);
+    document.getElementById("cityTableBody").innerHTML = topCities.map(c => `<tr><td><b>#${c.rank}</b></td><td>${c.city}</td><td>₹${(c.revenue/1e5).toFixed(1)}L</td><td>${c.share.toFixed(1)}%</td></tr>`).join('');
+  }
+
+  // COGNOS URLs (IBM)
+  const cognosPrimary = "https://us3.ca.analytics.ibm.com/bi/?perspective=dashboard&pathRef=.my_folders%2Fibm%2B5&action=view&mode=dashboard&subView=model0000019d57dc6d23_00000000&nav_filter=true";
+  const cognosSecondary = "https://ap2.ca.analytics.ibm.com/bi/?perspective=dashboard&id=dashboard_bd478043-cef1-4dd2-8ba6-e5e826e14728&ui_appbar=true&options%5BdisableGlassPrefetch%5D=true&options%5Bcollections%5D%5BcanvasExtension%5D%5Bid%5D=com.ibm.bi.dashboard.canvasExtension&options%5Bcollections%5D%5BfeatureExtension%5D%5Bid%5D=com.ibm.bi.dashboard.core-features&options%5Bcollections%5D%5Bbuttons%5D%5Bid%5D=com.ibm.bi.dashboard.buttons&options%5Bcollections%5D%5Bwidget%5D%5Bid%5D=com.ibm.bi.dashboard.widgets&options%5Bcollections%5D%5BcontentFeatureExtension%5D%5Bid%5D=com.ibm.bi.dashboard.content-features&options%5Bcollections%5D%5BsaveServices%5D%5Bid%5D=com.ibm.bi.dashboard.saveServices&options%5Bcollections%5D%5Btemplates%5D%5Bid%5D=com.ibm.bi.dashboard.templates&options%5Bcollections%5D%5BvisualizationExtension%5D%5Bid%5D=com.ibm.bi.dashboard.visualizationExtensionCA&options%5Bcollections%5D%5BboardModel%5D%5Bid%5D=com.ibm.bi.dashboard.boardModelExtension&options%5Bcollections%5D%5BcontentTypes%5D%5Bid%5D=com.ibm.bi.dashboard.contentTypes&options%5Bcollections%5D%5BserviceExtension%5D%5Bid%5D=com.ibm.bi.dashboard.serviceExtension&options%5Bcollections%5D%5BlayoutExtension%5D%5Bid%5D=com.ibm.bi.dashboard.layoutExtension&options%5Bcollections%5D%5BcolorSetExtensions%5D%5Bid%5D=com.ibm.bi.dashboard.colorSetExtensions&options%5Bconfig%5D%5Bproduct%5D=CA&options%5Bconfig%5D%5BeditPropertiesLabel%5D=true&options%5Bconfig%5D%5BenableCustomVisualizations%5D=true&options%5Bconfig%5D%5BassetTags%5D%5B%5D=dashboard&options%5Bconfig%5D%5BfilterDock%5D=true&options%5Bconfig%5D%5BshowMembers%5D=true&options%5Bconfig%5D%5Bupgrades%5D=dashboard-core%2Fjs%2Fdashboard%2Fupgrades&options%5Bconfig%5D%5BassetType%5D=exploration&options%5Bconfig%5D%5BgeoService%5D=CA&options%5Bconfig%5D%5BsmartTitle%5D=true&options%5Bconfig%5D%5BnavigationGroupAction%5D=true&options%5Bconfig%5D%5BenableDataQuality%5D=false&options%5Bconfig%5D%5BmemberCalculation%5D=false&isAuthoringMode=true";
+  
+  function openCognos() { window.open(cognosSecondary, '_blank'); }
+
+  // LOGIN LOGIC with credentials Selvapriya / priya
+  document.getElementById("doLoginBtn").addEventListener("click", () => {
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    if (username === "Selvapriya" && password === "priya") {
+      document.getElementById("loginPanel").style.display = "none";
+      document.getElementById("dashboardMain").style.display = "block";
+      renderDashboard();
+    } else {
+      alert("Invalid credentials! Use: Selvapriya / priya");
+    }
+  });
+  document.getElementById("logoutDashboardBtn").addEventListener("click", () => {
+    document.getElementById("dashboardMain").style.display = "none";
+    document.getElementById("loginPanel").style.display = "block";
+    document.getElementById("loginPassword").value = "";
+  });
+  document.getElementById("cognosHeaderBtn").addEventListener("click", (e) => { e.preventDefault(); openCognos(); });
+  document.getElementById("openCognosMainBtn").addEventListener("click", openCognos);
+</script>
+</body>
+</html>
